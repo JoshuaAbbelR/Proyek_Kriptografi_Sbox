@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from io import BytesIO
 import tempfile
-from sbox_functions import validate_sbox, nonlinearity, sac, bic_nl, calculate_bic_sac, lap, dap
+from sbox_functions import validate_sbox, nonlinearity, sac, bic_nl, bic_sac, lap, dap
 
 st.title("S-Box Verification Tool")
 st.write("Unggah file S-Box dalam format Excel untuk memulai verifikasi.")
@@ -47,7 +47,7 @@ if uploaded_file:
             if "Bit Independence Criterion - NL (BIC-NL)" in selected_ops:
                 results["BIC-NL"] = bic_nl(sbox, n)
             if "Bit Independence Criterion - SAC (BIC-SAC)" in selected_ops:
-                results["BIC-SAC"] = calculate_bic_sac(sbox)
+                results["BIC-SAC"] = bic_sac(sbox)
             if "Linear Approximation Probability (LAP)" in selected_ops:
                 results["LAP"] = lap(sbox, n)
             if "Differential Approximation Probability (DAP)" in selected_ops:
