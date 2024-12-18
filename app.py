@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from io import BytesIO
 from sbox_functions import validate_sbox, nonlinearity, sac, bic_nl, bic_sac, lap, dap
 
 st.title("S-Box Verification Tool")
@@ -54,10 +55,19 @@ if uploaded_file:
             st.json(results)
 
             # Download hasil
-            result_df = pd.DataFrame(list(results.items()), columns=["Metric", "Value"])
-            st.download_button(
-                "Download Excel",
-                result_df.to_excel(index=False),
-                file_name="sbox_results.xlsx",
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            )
+            if st.button("Download Hasil"):
+                result_df = pd.DataFrame(list(results.items()), columns=["Metric", "Value"])
+                
+                # Simpan DataFrame ke buffer memori
+                output = BytesIO()
+                with pd.ExcelWriter(output, engine="openpyxl") as writer:
+                    result_df.to_excel(writer, index=False, sheet_name="S-Box Results")
+                processed_data = output.getvalue()
+
+                # Gunakan buffer untuk download_button
+                st.download_button(
+                    label="Download Excel",
+                    data=processed_data,
+                    file_name="sbox_results.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                )
